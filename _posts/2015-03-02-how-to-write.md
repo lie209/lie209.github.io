@@ -1,13 +1,61 @@
 ---
 layout: post
-title: 这是一篇博客文章模板
-date: 2015-3-02
+title: Java动态绑定与多态的一些总结
+date: 2018-11-10
 categories: blog
-tags: [标签一,标签二]
-description: 文章金句。
+tags: [Java学习]
+description: 学习经验
 ---
 
-这里是博客正文。
+当用父类声明子类时，类似于：
+
+```java
+Person a=new Student();
+```
+引用一下在[菜鸟教程](http://www.runoob.com/java/java-polymorphism.html)里的一个总结，个人感觉非常有用：
+
+>对于多态，可以总结以下几点：
+一、使用父类类型的引用指向子类的对象；
+二、该引用只能调用父类中定义的方法和变量；
+三、如果子类中重写了父类中的一个方法，那么在调用这个方法的时候，将会调用子类中的这个方法；（动态连接、动态调用）;
+四、变量不能被重写（覆盖），”重写“的概念只针对方法，如果在子类中”重写“了父类中的变量，那么在编译时会报错。
+
+*注意，当实例方法是私有的时候，就没有上面这些关系了，调用方法时该用谁的就用谁的*
+
+以下这段代码对于理解这个非常有用：
+```java
+import java.util.*;
+public class Test
+{
+    public static void main(String[] args)
+    {
+        new Person().printPerson();// 具体的对象
+        new Student().printPerson();
+    }
+}
+
+class Student extends Person
+{
+    @Override
+    String getInfo()
+    {
+        return "Student";
+    }
+}
+
+class Person
+{
+    String getInfo()
+    {
+        return  "PERSON";
+    }
+    public void printPerson()
+    {
+        System.out.println(getInfo());
+    }
+}
+```
+刚看的时候被弄混了，发现这只不过是简单的调用而已，要理解一下重写的概念才能弄懂上面的。
 
 
 

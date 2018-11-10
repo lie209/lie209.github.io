@@ -1,32 +1,23 @@
-# About
+## 说明
 
-This is my blog based on jekyll. And I change the style and interactive. If you want to use this model of the blog. **Please give a star at this repository**. Then you can clone it as your blog model.
+此博客模板 Fork 自仓库：[cnfeat/blog.io: 简单直接可用博客模板](https://github.com/cnfeat/blog.io)
 
-You can visit [here](http://gaohaoyang.github.io) to see this blog.
+配套说用说明：[如何搭建一个独立博客——简明 GitHub Pages与 jekyll 教程 - 读立写生](http://www.cnfeat.com/blog/2014/05/10/how-to-build-a-blog/)
 
----
+## 博客模板修订清单
 
-这是我的博客，基于 jekyll。我改了所有默认的样式和交互。如果你想使用这个博客模板。**请先在这个仓库上点个star吧**，这也是对我的肯定和鼓励，谢谢了。然后你可以克隆这个仓库用作你自己的博客。
+文档内有详细注释，可按注释逐个修订
 
-博客访问地址：[点击这里](http://gaohaoyang.github.io)
+* 博客名字、作者信息、浏览器小图标等：_config.yml 
+* 个人介绍页面：about.md
+* 代表作页面：milestone.md
+* 文章模板：blog.io/_posts/2015-03-02-how-to-write.md 
+* 
 
-**使用时请注明模板来源:  Jekyll theme by [Gaohaoyang](https://github.com/Gaohaoyang/gaohaoyang.github.io)**
+## 模板作者
 
-<!--
+陈素封，博客：独立写生：[cnfeat.com](cnfeat.com)
 
-## 被引用信息
-
-使用了我的模板并写明来源的人：   
-
-* [dreamholy](http://dreamholy.github.io/)
-
-没有注明来源的人：
-
-* [yangshuailing](http://yangshuailing.github.io/com/)
-* [huapu728](http://huapu728.github.io/)
-* [greatbuger](http://greatbuger.github.io/) 
-
-
--->
+联系方式：cnfeat@gmail.com
 
 

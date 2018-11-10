@@ -28,6 +28,7 @@ Ubuntu上可以直接进入英伟达的显卡设置切换为核显。Deepin目�
 
 **2.最佳解决方案。**
 安装第三方的Bumblebee程序，可实现NVIDIA Optimus，终端中执行：
+
 <kbd>针对闭源驱动</kbd>：安装Bumblebee-nvidia,*其中primus可选,用于提升性能*
 ```
 sudo apt-get install bumblebee-nvidia primus 

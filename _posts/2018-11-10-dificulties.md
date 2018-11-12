@@ -3,7 +3,7 @@ layout: post
 title: 困难越大，收获越大
 date: 2018-11-10
 categories: blog
-tags: [生活，感悟]
+tags: [生活][感悟]
 description: 困难越大，收获的经验往往越多
 ---
 今天下午选了Java课程设计的题目,我选的是

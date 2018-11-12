@@ -7,5 +7,5 @@ tags: [生活]
 description: 
 ---
 
-![键盘，鼠标，手柄](IMG_20181112_231710.jpg)
+![键盘，鼠标和手柄](http://lie209.tech/img/IMG_20181112_231710.jpg)
 

@@ -49,6 +49,8 @@ package java.lang.Integer
 >Number没有实现Comparable接口！！！！！
 
 
+具体为什么要这么做，[点这里](https://stackoverflow.com/questions/480632/why-doesnt-java-lang-number-implement-comparable)
+
 正确代码如下：
 
 ```java

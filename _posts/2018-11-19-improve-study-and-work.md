@@ -73,6 +73,8 @@ _你想一下，用鼠标慢慢找，慢慢点的速度快，还是键盘上几�
 
 比如Xmind里，
 
+<kbd>Ctrl+I</kbd> 插入来自文件的图片
+
 <kbd>Spacebar</kbd> 编辑
 
 <kbd>Tab</kbd> 添加外面的那些框

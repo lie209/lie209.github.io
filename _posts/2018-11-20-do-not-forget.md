@@ -9,8 +9,6 @@ description:
 
 分享一首歌曲，听着很感动。
 
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=426027293&auto=1&height=66"></iframe>
-
 **你曾是少年**
 
 
@@ -93,4 +91,6 @@ description:
 >当我和世界初相见 当我曾经是少年
 
 
+<iframe id="b" class="b video_pc" src="https://www.bilibili.com/html/player.html?aid=2366913&as_wide=1" frameborder="0" allowfullscreen="true">
+</iframe>
 

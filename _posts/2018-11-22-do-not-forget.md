@@ -12,7 +12,11 @@ description:
 
 **你曾是少年**
 
+_版权原因，不能放外链了。_
+网易云的播放链接[在这里](https://music.163.com/#/song?id=426027293)
+_____
 
+_歌词写的也挺不错的：_
 >有些时候 你怀念从前日子
 
 >可天真离开时 你却没说一个字
@@ -91,7 +95,11 @@ description:
 
 >当我和世界初相见 当我曾经是少年
 
+____
 
+
+_下面是这首歌的MV，在电脑上显示不出来，移动端却可以，我也不知道为什么_
+___
 <iframe id="b" class="b video_pc" src="https://www.bilibili.com/html/player.html?cid=3699686&aid=2366913&as_wide=1" frameborder="0" allowfullscreen="true">
 </iframe>  
 

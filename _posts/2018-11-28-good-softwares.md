@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Windows下一些值得推荐的好软件（不定期更新）
+title: Windows上一些值得推荐的好软件（不定期更新）
 date: 2018-11-28
 categories: blog
 tags: [经验]

@@ -3,7 +3,7 @@ layout: post
 title: 记住一些快捷键，增加自己的工作学习效率
 date: 2018-11-19
 categories: blog
-tags: [生活]
+tags: [经验]
 description: 
 ---
 

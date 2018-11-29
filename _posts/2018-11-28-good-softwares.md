@@ -21,7 +21,7 @@ description:
 
 ______
 
-## SmartDefrag 6
+## Smart Defrag
 >很出名的磁盘整理软件
 
 电脑是全固态的就别安装这个软件了，固态本来就不需要整理磁盘碎片，多此一举，而且影响寿命。
@@ -30,11 +30,11 @@ ______
 
 而且有一些额外的功能，比如整理完生成报告，系统空闲时自动整理碎片，整理完自动关机什么的。
 
-其实第三方的磁盘整理软件有很多，比如Wise Disk Cleaner等。
+其实第三方的有磁盘整理功能软件有很多，比如Wise Disk Cleaner等。
 
 对比了许多同类软件，还是这个**Smart Defrag**好，我也用了好多年了，从3.x用到如今的6.1版本。
 
-![Smart Defrag](http://lie209.tech/img/GoodSoftware/SmartDefrag.png "Smart Dfrag")
+![Smart Defrag](http://lie209.tech/img/GoodSoftware/SmartDefrag.png "Smart Defrag")
 
 这个开发商旗下还有一个系统优化软件叫*Advanced SystemCare*，也挺出名的，不过我并不推荐。
 
@@ -42,6 +42,9 @@ PS：别看到这个软件开发商旗下许多软件是英文的，以为它是
 
 
 
->下面是我以后要填坑的：Wallpaper Engine，Wise Care 365,TeamViewr,CCleaner,IntelliJ IDEA,360安全卫士，Xmind,Visual Studio,Visual Studio Code,Bandizip,Google Chrome,rufus,BatteryIndicator,VirtualBox,分区助手,Everything,腾讯桌面整理  等等....
+下面是我以后要填坑的：
+
+>Wallpaper Engine，Wise Care 365,TeamViewr,CCleaner,IntelliJ IDEA,360安全卫士，Xmind,Visual Studio,Visual Studio Code,Bandizip,Google Chrome,rufus,BatteryIndicator,VirtualBox,分区助手,
+Everything,腾讯桌面整理  等等....
 
 >以后不定期更新

@@ -41,10 +41,34 @@ ______
 PS：别看到这个软件开发商旗下许多软件是英文的，以为它是一家外国公司，其实它是一家中国公司。
 
 
+## Battery Indicator
+>给Xbox手柄用的电量显示软件
 
+这个软件应该比较小众，是我在一个论坛上发现的。
+
+据说在Xbox上，当手柄没电时会自动弹出提示,我的手柄买来是用在电脑上玩PC游戏的,就没这么好了。
+
+在PC上你如果买的是原装的手柄充电套组，你可以在Xbox Accessories这个UWP应用上看电量。
+
+但是自己买的电池（充电或者不充电的）好像都不可以在那个应用里查看电池电量。
+
+于是问题就来了，我该如何知道我的手柄上电池剩余电量呢？
+
+我终于找到了Battery Indicator(全称*XB1Controller Battery Indicator*)，这个软件只会在任务栏里显示电池电量图标，别的啥都不会多干。
+
+只会在电池快没电时弹出一个通知，如果通知烦到你了还可以关掉。
+
+![Battery Indicator](http://lie209.tech/img/GoodSoftware/BatteryIndicator.jpg "Battery Indicator")
+
+这是一个开源软件，源码都在Github上，不用担心它的安全性。
+
+下载地址不用找了，[在这里](https://github.com/NiyaShy/XB1ControllerBatteryIndicator/releases)
+
+
+___
 下面是我以后要填坑的：
 
->Wallpaper Engine，Wise Care 365,TeamViewr,CCleaner,IntelliJ IDEA,360安全卫士，Xmind,Visual Studio,Visual Studio Code,Bandizip,Google Chrome,rufus,BatteryIndicator,VirtualBox,分区助手,
+>Wallpaper Engine，Wise Care 365,TeamViewr,CCleaner,IntelliJ IDEA,360安全卫士，Xmind,Visual Studio,Visual Studio Code,Bandizip,Google Chrome,rufus,VirtualBox,分区助手,
 Everything,腾讯桌面整理  等等....
 
 >以后不定期更新

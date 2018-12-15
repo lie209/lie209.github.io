@@ -105,5 +105,4 @@ _下面是这首歌的MV，在电脑上可能显示不出来，移动端却可�
 --------
 
 
-<iframe id="b" class="b video_pc" src="https://www.bilibili.com/html/player.html?cid=3699686&aid=2366913&as_wide=1" frameborder="0" allowfullscreen="true"> </iframe>  
-
+<iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=2366913&amp;cid=3699686&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>

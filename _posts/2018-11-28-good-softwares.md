@@ -68,7 +68,7 @@ PS：别看到这个软件开发商旗下许多软件是英文的，以为它是
 ___
 下面是我以后要填坑的：
 
->Wallpaper Engine，Wise Care 365,TeamViewr,CCleaner,IntelliJ IDEA,360安全卫士，Xmind,Visual Studio,Visual Studio Code,Bandizip,Google Chrome,rufus,VirtualBox,分区助手,
+>Wallpaper Engine，Wise Care 365,TeamViewer,CCleaner,IntelliJ IDEA,360安全卫士，Xmind,Visual Studio,Visual Studio Code,Bandizip,Google Chrome,rufus,VirtualBox,分区助手,
 Everything,腾讯桌面整理  等等....
 
 >以后不定期更新

@@ -18,7 +18,7 @@ description: "李德鑫的个人博客"
             {{ post.content | strip_html | truncate:150 }}
         </div>
     </a>
-    <p class="post-meta">Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}</p>
+    <p class="post-meta">Posted on {{ post.date | date: "%B %-d, %Y" }}</p>
 </div>
 
 <hr>

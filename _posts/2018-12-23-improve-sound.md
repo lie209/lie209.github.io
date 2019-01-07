@@ -41,5 +41,5 @@ sudo apt install caps
 
 这篇博文我是在Deepin上完成的。Deepin这个发行版真心好用。
 
-![Deepin](http://lie209.tech/img/improveSound/sound.png  "Deepin")
+![Deepin](https://i.loli.net/2019/01/07/5c331f5434953.png  "Deepin")
 

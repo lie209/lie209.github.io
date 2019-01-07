@@ -1,13 +1,10 @@
 ---
-layout:     post
-title:      在Linux上提高音效
-subtitle:   一个简单的方法
-date:       2017-02-06
-author:     Lie209
-header-img: 
-catalog: true
-tags:
-    - linux
+layout: post
+title: 在Linux上提高音效
+date: 2018-12-23
+categories: blog
+tags: [Linux]
+description: 
 ---
 
 

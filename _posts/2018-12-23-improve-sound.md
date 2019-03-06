@@ -3,6 +3,7 @@ layout: post
 title: 在Linux上提高音效
 date: 2018-12-23
 categories: blog
+catalog: true
 tags: [Linux]
 description: 
 ---

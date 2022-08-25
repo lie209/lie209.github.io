@@ -62,7 +62,7 @@ kramdown:
 gitalk:
   enable: true    #是否开启Gitalk评论
   clientID: 14c1fbbb95f3faa2dd3d                          #生成的clientID
-  clientSecret: 8904268120d1ba20cff4c7ba34473b814f037975    #生成的clientSecret
+  clientSecret: 13e78dbc795f4f2c1c26be74a52789fb5749f2c5    #生成的clientSecret
   repo: lie209.github.io    #仓库名称
   owner: lie209    #github用户名
   admin: lie209

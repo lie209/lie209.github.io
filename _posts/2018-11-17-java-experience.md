@@ -3,7 +3,7 @@ layout: post
 title: 关于Number类的一个注意事项（from书上的一个题目）
 date:  2018-11-17
 categories: blog
-tags: [Java学习]
+tags: [Java]
 description: 
 ---
 

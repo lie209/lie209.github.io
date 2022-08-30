@@ -35,7 +35,7 @@ ______
 
 对比了许多同类软件，还是这个**Smart Defrag**好，我也用了好多年了，从3.x用到如今的6.1版本。
 
-![Smart Defrag](http://lie209.tech/img/GoodSoftware/SmartDefrag.png "Smart Defrag")
+![SmartDefrag](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/SmartDefrag.png)
 
 这个开发商旗下还有一个系统优化软件叫*Advanced SystemCare*，也挺出名的，不过我并不推荐。
 
@@ -59,7 +59,7 @@ PS：别看到这个软件开发商旗下许多软件是英文的，以为它是
 
 只会在电池快没电时弹出一个通知，如果通知烦到你了还可以关掉。
 
-![Battery Indicator](http://lie209.tech/img/GoodSoftware/BatteryIndicator.jpg "Battery Indicator")
+![BatteryIndicator](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/BatteryIndicator.jpg)
 
 这是一个开源软件，源码都在Github上，不用担心它的安全性。
 

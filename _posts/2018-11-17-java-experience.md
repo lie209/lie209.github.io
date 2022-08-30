@@ -9,7 +9,7 @@ description:
 
 从书上一个题目说起。
 
-![课本上的一个题目](http://lie209.tech/img/Cache_649ec4f1cab57c90..jpg "书上的一个题目")
+![Cache_649ec4f1cab57c90.](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/Cache_649ec4f1cab57c90..jpg)
 
 具体代码如下：
 

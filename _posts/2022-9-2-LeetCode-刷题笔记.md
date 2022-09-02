@@ -11,7 +11,7 @@ description: 持续更新...
 
 ## 多复用前面的处理结果，减少时间开销
 
-以第`303`题为例，一开始尝试以`前缀和`的思想减少时间开销，代码如下
+以第[`303`](https://leetcode.cn/problems/range-sum-query-immutable/)题为例，一开始尝试以`前缀和`的思想减少时间开销，代码如下
 
 ```java
 public NumArray(int[] nums) 

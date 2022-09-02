@@ -3,7 +3,7 @@ layout: post
 title: LeetCode 刷题笔记
 date: 2022-9-2
 catalog: true
-tags: [论文]
+tags: [Java]
 description: 持续更新...
 ---
 

@@ -4,7 +4,7 @@ title: Deepin Linux 上双显卡电脑如何关闭独显，使用核显
 date: 2018-11-10
 categories: blog
 tags: [Linux]
-description: linux摸索中的经验。
+description: linux摸索中的经验
 ---
 
 >参考：http://wiki.deepin.org/wiki/%E6%98%BE%E5%8D%A1
@@ -62,7 +62,6 @@ optirun 0ad #使用独显（NVIDIA显卡）运行0 A.D.游戏
 推荐安装bbswitch，并修改bumblebee的配置，使用bbswitch。
 
 编辑/etc/bumblebee/bumblebee.conf，修改文件最后的nvidia和nouveau节点中，PMMethod=auto 修改为 PMMethod=bbswitch。
-
 
 
 

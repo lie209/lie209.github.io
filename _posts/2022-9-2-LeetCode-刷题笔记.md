@@ -4,7 +4,7 @@ title: LeetCode 刷题笔记
 date: 2022-9-2
 catalog: true
 tags: [Java]
-description: 持续更新...
+subtitle: 持续更新...
 ---
 
 # `LeetCode` 刷题笔记

@@ -195,4 +195,22 @@ Sample text in red box
 
 ![image-20220905095907755](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095907755.png)
 
-可以使用`\column`命令，实现分栏
+可以使用`\column`命令，实现分栏效果
+
+```latex
+\column{0.5\textwidth}
+This is a text in first column.
+$$E=mc^2$$
+\begin{itemize}
+\item First item
+\item Second item
+\end{itemize}
+
+\column{0.5\textwidth}
+This text will be in the second column
+and on a second tought this is a nice looking
+layout in some cases.
+\end{columns}
+```
+
+![image-20220905102248609](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905102248609.png)

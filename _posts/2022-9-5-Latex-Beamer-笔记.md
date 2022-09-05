@@ -83,8 +83,6 @@ tags: [论文]
 \frame{\titlepage}
 ```
 
-
-
 ### 目录页
 
 可以选择将目录放在每个部分的开头，高亮显示当前节的标题，只需在`tex`文档的序言处定义如下语句
@@ -128,5 +126,73 @@ tags: [论文]
 \end{frame}
 ```
 
+使用`\section`命令为PPT分节，各章节标题会自动添加到目录
+
+```latex
+\section{First section}
+```
+
 ### 为演示文稿添加效果
 
+可以使用`\pause`命令为PPT添加简单的演示效果，表示*停顿*
+
+```latex
+\begin{frame}
+\frametitle{章节测试}
+章节测试 \pause
+
+
+章节测试2 \pause
+
+
+章节测试3
+\end{frame}
+```
+
+> 中间空两行是因为`latex`中，需要两个换行符才能空出一行
+
+### 高亮文本
+
+可以使用`\alert`命令来高亮文本
+
+```latex
+In this slide, some important text will be
+\alert{高亮文本} because it's important.
+Please, don't abuse it.
+```
+
+![image-20220905095159781](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095159781.png)
+
+使用`alertblock`环境来创建高亮块
+
+```latex
+\begin{alertblock}{Important theorem}
+Sample text in red box
+\end{alertblock}
+```
+
+![image-20220905095407658](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095407658.png)
+
+### 其他操作
+
+使用`block`环境在`frame`中插入一个独立的块
+
+```latex
+\begin{block}{新的块}
+  新的块
+\end{block}
+```
+
+![image-20220905095616318](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095616318.png)
+
+可以使用`examples`环境创建一个举例的块
+
+```latex
+\begin{examples}
+  例子
+\end{examples}
+```
+
+![image-20220905095907755](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095907755.png)
+
+可以使用`\column`命令，实现分栏

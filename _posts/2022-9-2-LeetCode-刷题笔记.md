@@ -9,7 +9,9 @@ subtitle: 持续更新...
 
 # `LeetCode` 刷题笔记
 
-## 多复用前面的处理结果，减少时间开销
+这篇笔记主要记录学习`labuladong`算法秘籍的一些心得体会
+
+## 前缀和数组
 
 以第[`303`](https://leetcode.cn/problems/range-sum-query-immutable/)题为例，一开始尝试以`前缀和`的思想减少时间开销，代码如下
 
@@ -63,3 +65,6 @@ Your memory usage beats 44.73 % of java submissions (44.3 MB)
 ```
 
 优化效果很明显！
+
+## 差分数组
+

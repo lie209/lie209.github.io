@@ -1,7 +1,7 @@
 ---
 layout: post
 title: LeetCode 刷题笔记
-date: 2022-9-23
+date: 2022-9-27
 catalog: true
 tags: [Java]
 subtitle: 持续更新...
@@ -150,3 +150,36 @@ Your memory usage beats 44.73 % of java submissions (44.3 MB)
      ```
 
      这样就在一个循环里，对一个数组进行了多次的加减法操作，大大降低了时间复杂度
+
+## 使用优先级队列进行排序
+
+> 最小堆指的是根节点的值小于所有其他堆节点的值
+
+> 在`Java`中可以使用`PriorityQueue`来实现和使用最小堆
+
+`Java`中的优先级队列基于堆排序实现，具体底层实现可见[此处](https://mp.weixin.qq.com/s/o7tdyLiYm668dpUWd-x7Lg)
+
+建立最小优先级队列：
+
+```java
+//建立一个优先级队列，传入优先级队列长度以及比较的接口
+PriorityQueue<ListNode> list=new PriorityQueue<>(length,(a,b)->(a.val-b.val));
+```
+
+后面的`(a,b)->(a.val-b.val)`是一个`lambada`表达式形式的接口，通过改变这个可以改变队列的优先级
+
+以`Java`中最小优先级队列为例，每次使用`poll()`方法，可以返回队列中的最小元素：
+
+```java
+//获得优先级队列中最小的元素
+p.next=list.poll();
+```
+
+使用`add()`方法往堆中添加元素，元素会自动在堆中排好序
+
+```java
+list.add(node);
+```
+
+具体使用实例：力扣[23题](https://leetcode.cn/problems/merge-k-sorted-lists/)
+

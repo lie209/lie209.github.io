@@ -183,3 +183,38 @@ list.add(node);
 
 具体使用实例：力扣[23题](https://leetcode.cn/problems/merge-k-sorted-lists/)
 
+## 使用双指针解决某些问题
+
+比如力扣[26题](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/)，题目要求删除有序数组中的重复项
+
+![image-20220929160157458](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220929160157458.png)
+
+具体思路是：
+
+- 使用两个指针，一个`p`指向前面，一个`q`指向后面，`p`用于指向最终结果的最后一个，`q`用于向后探测
+- 因为是**有序数组**，所以只要`q`指向的元素不等于`p`指向的元素，便可以将这个元素放到`p`位置，实现了在一个循环里删除掉了一个数组中的重复元素
+
+力扣[83题](https://leetcode.cn/problems/remove-duplicates-from-sorted-list/)也是一样的操作，实现在**一个循环**里查找和删除重复元素
+
+对于力扣[283题](https://leetcode.cn/problems/move-zeroes/)以及力扣[27题](https://leetcode.cn/problems/remove-element/)，可以使用双指针实现原地删除或移动元素，即不需要使用额外的空间，以`283题`为例，实现原地删除或移动元素的代码模板大致如下：
+
+```java
+int p=0,q=0;
+//将非零元素移动到前面
+while(q<nums.length) 
+{
+    if(nums[q]!=0)
+    {
+         nums[p]=nums[q];
+         p++;
+         q++;
+     }
+     else
+     {
+          q++;
+     }
+}    
+```
+
+主要是使用两个指针，一个“守家”，一个“探路”，进而实现要求的操作
+

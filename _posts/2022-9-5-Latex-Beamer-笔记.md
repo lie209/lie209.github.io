@@ -33,7 +33,7 @@ tags: [论文]
 
 ### 标题页
 
-![image-20220904190905276](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220904190905276.png)
+![image-20220904190905276](https://s2.loli.net/2023/03/10/763la9vXMzI8sTc.png)
 
 此页面的相关代码如下
 
@@ -75,7 +75,7 @@ tags: [论文]
 
 此时显示效果如下
 
-![image-20220904191745422](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220904191745422.png)
+![image-20220904191745422](https://s2.loli.net/2023/03/10/yH9fX2IpUc56JVQ.png)
 
 需要注意：在序言处定义完封面之后，需要在接下来`document`环境中加上以下语句，才能让标题页正常显示，意思是在文档中插入这个`frame`
 
@@ -99,7 +99,7 @@ tags: [论文]
 
 这样在每一部分的开头处都会显示如下页面
 
-![image-20220904192341438](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220904192341438.png)
+![image-20220904192341438](https://s2.loli.net/2023/03/10/vGosckgtKFAlS6m.png)
 
 ---
 
@@ -114,7 +114,7 @@ tags: [论文]
 \end{frame}
 ```
 
-![image-20220904192657926](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220904192657926.png)
+![image-20220904192657926](https://s2.loli.net/2023/03/10/zl6Qa5EpPmUnO8Z.png)
 
 ### 正文页
 
@@ -161,7 +161,7 @@ In this slide, some important text will be
 Please, don't abuse it.
 ```
 
-![image-20220905095159781](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095159781.png)
+![image-20220905095159781](https://s2.loli.net/2023/03/10/gboCLsjcBTMGwiF.png)
 
 使用`alertblock`环境来创建高亮块
 
@@ -171,7 +171,7 @@ Sample text in red box
 \end{alertblock}
 ```
 
-![image-20220905095407658](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095407658.png)
+![image-20220905095407658](https://s2.loli.net/2023/03/10/HC1xwIrKszZFX4f.png)
 
 ### 其他操作
 
@@ -183,7 +183,7 @@ Sample text in red box
 \end{block}
 ```
 
-![image-20220905095616318](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095616318.png)
+![image-20220905095616318](https://s2.loli.net/2023/03/10/7dUIqL61koKucn3.png)
 
 可以使用`examples`环境创建一个举例的块
 
@@ -193,7 +193,7 @@ Sample text in red box
 \end{examples}
 ```
 
-![image-20220905095907755](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905095907755.png)
+![image-20220905095907755](https://s2.loli.net/2023/03/10/aeYy3gPV279Hcpw.png)
 
 可以使用`\column`命令，实现分栏效果
 
@@ -213,4 +213,4 @@ layout in some cases.
 \end{columns}
 ```
 
-![image-20220905102248609](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220905102248609.png)
+![image-20220905102248609](https://s2.loli.net/2023/03/10/Cb6o4G8KXl3mW9c.png)

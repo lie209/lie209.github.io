@@ -9,7 +9,7 @@ description:
 
 从书上一个题目说起。
 
-![Cache_649ec4f1cab57c90.](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/Cache_649ec4f1cab57c90..jpg)
+![Cache_649ec4f1cab57c90.](https://s2.loli.net/2023/03/10/t57yo48fh1CmnGs.jpg)
 
 具体代码如下：
 

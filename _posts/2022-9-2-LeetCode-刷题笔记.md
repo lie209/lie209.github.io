@@ -72,7 +72,7 @@ Your memory usage beats 44.73 % of java submissions (44.3 MB)
 
 所谓的差分数组就是构造一个数组，其中第0个元素不定，可以为0或者为原数组第0个元素，剩余元素为原数组对应位置减去前一个位置的差
 
-![image-20220923101642435](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220923101642435.png)
+![image-20220923101642435](https://s2.loli.net/2023/03/10/6UstIOj3nR2MNJh.png)
 
 ### 差分数组的使用
 
@@ -187,7 +187,7 @@ list.add(node);
 
 比如力扣[26题](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/)，题目要求删除有序数组中的重复项
 
-![image-20220929160157458](https://lie209blog.oss-cn-hangzhou.aliyuncs.com/img/image-20220929160157458.png)
+![image-20220929160157458](https://s2.loli.net/2023/03/10/F3txT6RZLaphvij.png)
 
 具体思路是：
 

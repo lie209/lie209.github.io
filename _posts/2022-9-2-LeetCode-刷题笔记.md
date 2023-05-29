@@ -1,7 +1,7 @@
 ---
 layout: post
 title: LeetCode 刷题笔记
-date: 2022-9-27
+date: 2023-5-29
 catalog: true
 tags: [Java]
 subtitle: 持续更新...
@@ -166,7 +166,19 @@ Your memory usage beats 44.73 % of java submissions (44.3 MB)
 PriorityQueue<ListNode> list=new PriorityQueue<>(length,(a,b)->(a.val-b.val));
 ```
 
-后面的`(a,b)->(a.val-b.val)`是一个`lambada`表达式形式的接口，通过改变这个可以改变队列的优先级
+后面的`(a,b)->(a.val-b.val)`是一个`lambada`表达式形式的接口，**注意`lambada`表达式中的相减顺序，这将影响队列优先级**
+
+例如，创建一个返回最大值的优先级队列：
+
+```java
+//创建一个从大到小的优先级队列
+PriorityQueue<int[]> maxNums2=new PriorityQueue<>((int[] pairs1,int[] pairs2)->
+{
+    return pairs2[1]-pairs1[1];
+});
+```
+
+
 
 以`Java`中最小优先级队列为例，每次使用`poll()`方法，可以返回队列中的最小元素：
 
@@ -175,7 +187,7 @@ PriorityQueue<ListNode> list=new PriorityQueue<>(length,(a,b)->(a.val-b.val));
 p.next=list.poll();
 ```
 
-使用`add()`方法往堆中添加元素，元素会自动在堆中排好序
+使用`add()`方法往堆中添加元素，元素会自动在堆中排好序，或者也可以使用`offer()`方法来添加
 
 ```java
 list.add(node);
@@ -217,4 +229,152 @@ while(q<nums.length)
 ```
 
 主要是使用两个指针，一个“守家”，一个“探路”，进而实现要求的操作
+
+## 滑动窗口的使用
+
+一个右指针`right`，一个左指针`left`
+
+一个哈希表`HashMap`
+
+右指针向右滑动，同时维护哈希表中的元素，达到相关条件后，左指针开始收缩，获得想要的结果，以力扣[3题](https://leetcode.cn/problems/longest-substring-without-repeating-characters/submissions/)为例
+
+```java
+    public int run(String s)
+    {
+        if(s.length()==0)
+        {
+            return 0;
+        }
+        HashMap<Character,Integer> map=new HashMap<>();
+        int left = 0,right = 0;
+        int res=Integer.MIN_VALUE;
+        while (right <s.length())
+        {
+            char current=s.charAt(right);
+            if(!map.containsKey(current))
+            {
+                map.put(current, 1);
+            }
+            else
+            {
+                map.replace(current, map.get(current)+1);
+            }
+            //临界条件，出现重复元素，左边开始收缩
+            while (map.get(current)>1)
+            {
+                char currentLeft=s.charAt(left);
+                map.replace(currentLeft, map.get(currentLeft)-1 );
+                left++;
+            }
+            res=res<right-left+1?right-left+1:res;
+            right++;
+        }
+        return res;
+    }
+```
+
+## 二分法
+
+通常使用二分法来解决边界问题，或者查找问题
+
+比如说，要在一个范围里，查找一个满足条件的数，就需要使用二分法，来逐步缩小范围，一个一个试
+
+以力扣[1011题](https://leetcode.cn/problems/capacity-to-ship-packages-within-d-days/)为例
+
+设定好了上下界，然后使用二分法寻找满足条件的下界
+
+```java
+    public int run(int[] weights,int days)
+    {
+        int maxWeight=0,sum = 0;
+        for (int i = 0; i < weights.length; i++)
+        {
+            maxWeight=weights[i]>maxWeight?weights[i]:maxWeight;
+            sum=sum+weights[i];
+        }
+        int left = Math.max(maxWeight, sum/days);
+        int right = sum;
+        int result = right;
+        while (left<right)
+        {
+            int weight=(left+right)/2;
+            int day=1;
+            int index=0;
+            int currentWeight=0;
+            while (index < weights.length)
+            {
+                if(currentWeight+weights[index]<=weight)
+                {
+                    currentWeight=currentWeight+weights[index];
+                    index++;
+                }
+                else
+                {
+                    currentWeight=weights[index];
+                    day++;
+                    index++;
+                }
+            }
+            if(day<=days)
+            {
+                right=weight;
+                result=weight;
+            }
+            else if (day>days)
+            {
+                left=left+1;
+            }
+        }
+        return result;
+    }
+```
+
+## 单调栈
+
+单调栈一般用来解决求下一个最大，或者下一个最小值的问题。
+
+以求**下一个最大值**为例，一般步骤为：
+
+- 判断栈顶元素和当前元素的大小
+  - 若 当前元素＜栈顶元素：当前元素入栈
+  - 若 当前元素＞栈顶元素：弹出栈顶元素，并记录当前元素作为栈顶元素的下一个更大元素
+
+例如力扣[503题](https://leetcode.cn/problems/next-greater-element-ii/)：
+
+与传统的单调栈不同的是，加入了循环数组，对于循环数组问题，可以简单地将数组延伸为两倍即可，代码实现如下
+
+```java
+	//具体实现时，可以使用取余而不是创建一个两倍长度数组，来实现循环数组
+    public int[] run(int[] nums)
+    {
+        int n=nums.length;
+        int[] results=new int[nums.length];
+        //默认值设置为-1
+        Arrays.fill(results, -1);
+        Stack<Integer> stack=new Stack<>();
+        stack.push(0);
+        for (int i = 1; i < n*2; i++)
+        {
+            int num=nums[i%n];
+            //判断当前元素与栈顶元素的大小关系
+            if(num>nums[stack.peek()%n])
+            {
+                while (!stack.isEmpty()&&num>nums[stack.peek()])
+                {
+                    results[stack.peek()%n]=num;
+                    stack.pop();
+                }
+                stack.push(i%n);
+            }
+            else
+            {
+                stack.push(i%n);
+            }
+
+        }
+        return results;
+    }
+```
+
+
 

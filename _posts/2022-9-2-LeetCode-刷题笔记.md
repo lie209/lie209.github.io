@@ -331,7 +331,7 @@ while(q<nums.length)
 
 ## 单调栈
 
-单调栈一般用来解决求下一个最大，或者下一个最小值的问题。
+单调栈一般用来解决求**下一个最大**，或者**下一个最小值**的问题。
 
 以求**下一个最大值**为例，一般步骤为：
 
@@ -376,5 +376,81 @@ while(q<nums.length)
     }
 ```
 
+## 单调队列
 
+单调队列用来解决维护一个窗口，可以获得窗口中的最大值或者最小值
+
+> 在这种情况下，使用优先级队列会很耗费时间，并且在某些场景下不满足条件
+
+单调队列就像一个互联网公司：
+
+当你刚刚毕业进入公司，可恶的资本家就会裁掉那些不仅年纪比你大，能力还不如你的程序员（删掉队尾）； 当你努力工作终于在40岁变为全公司最强的程序员时，公司招进一个20岁但能力远不如你的毕业生，并因为你年龄太大而把你裁掉（删掉队头）
+
+![image-20230530161952547](https://s2.loli.net/2023/05/30/CceWgwdQNK8ly6S.png)
+
+具体实现如下，`Java`使用`Deque`来实现
+
+```java
+class MonotonicQueue
+    {
+        //队列最大值
+        Deque<Integer> deque=new LinkedList<>();
+        int front;
+        void pop(int a)
+        {
+            if(!deque.isEmpty()&&deque.getFirst()==a)
+            {
+                deque.pollFirst();
+
+            }
+            front=deque.getFirst();
+
+        }
+        void push(int a)
+        {
+            while (!deque.isEmpty()&&deque.getLast()<a)
+            {
+                deque.pollLast();
+            }
+            deque.offerLast(a);
+            front=deque.getFirst();
+        }
+        int getMax()
+        {
+            return front;
+        }
+        MonotonicQueue()
+        {
+        }
+    }
+```
+
+值得注意的是，对于一个`Deque`，具体为`[1, 2]`时，`last`元素是2，`first`元素是1。
+
+具体应用，例如力扣[239题](https://leetcode.cn/problems/sliding-window-maximum/)：
+
+```java
+    public int[] run(int[] nums,int k)
+    {
+        if(k==1)
+        {
+            return nums;
+        }
+        int[] results=new int[nums.length-k+1];
+        MonotonicQueue monotonicQueue=new MonotonicQueue();
+        //初始化第一个队列
+        for (int i = 0; i < k; i++)
+        {
+            monotonicQueue.push(nums[i]);
+        }
+        results[0]=monotonicQueue.getMax();
+        for (int i = 1; i <= nums.length-k; i++)
+        {
+            monotonicQueue.pop(nums[i-1]);
+            monotonicQueue.push(nums[i+k-1]);
+            results[i]=monotonicQueue.getMax();
+        }
+        return results;
+    }
+```
 

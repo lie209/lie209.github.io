@@ -376,6 +376,61 @@ while(q<nums.length)
     }
 ```
 
+其次，单调栈还可用用来维护一个单调递增或者递减的序列，如力扣[316题](https://leetcode.cn/problems/remove-duplicate-letters/)：
+
+![image-20230602172855405](https://s2.loli.net/2023/06/02/pVJsnYgGDQk5wAz.png)
+
+小字母越靠前字典序越小
+
+- 单调递增栈stack维护递增的最小字典序 + 哈希表hash维护所有字母最后出现的位置
+- 如果按普通单调栈去重，无法一定得到最小的字典序排列，比如abacb，在单调栈处理时会将第一个b直接弹出，使得最终结果为acb，但是最小字典序排列应该是abc，问题在于当我们前两位的a、b已符合递增入栈，那么后续遇到第二个a就不应该再次操作栈，因为栈中相同的a一定处于第二个a前方，按照最小字典序排布规律，较小的应该尽量放前方，**所以遇到栈中存在的字母应当跳过**
+
+- 当第一次遇到某个小于栈顶且栈中不存在的字母 i 时，如何判断是否弹出栈顶将当前i放入？按最小字典序（单调递增栈）原则会选择弹出，但是这里要注意res的完整性，不能缺少任何字母，所以在遇到这种情况时需要判断i后方是否还有栈顶字母，如果i后方还有栈顶字母，那么就可以弹出栈顶将i入栈；如果i后方没有栈顶字母了，那么为了保证完整性只能选择局部破坏单调性，跳过弹出并将小于原栈顶 i 压入
+
+```java
+    public String run(String s)
+    {
+        int len=s.length();
+        //记录该字母最后出现的位置
+        HashMap<Character,Integer> hashMap=new HashMap<>();
+        char[] chars=s.toCharArray();
+
+        for (int i = 0; i < len; i++)
+        {
+            if(hashMap.containsKey(chars[i]))
+            {
+                hashMap.replace(chars[i],i);
+            }
+            else
+            {
+                hashMap.put(chars[i],i);
+            }
+        }
+        Stack<Character> stack=new Stack<>();
+        stack.push(chars[0]);
+        for (int i = 1; i < len; i++)
+        {
+            if(stack.contains(chars[i]))
+            {
+                continue;
+            }
+            while (!stack.isEmpty()&&chars[i]<stack.peek()&&hashMap.get(stack.peek())>i)
+            {
+                stack.pop();
+            }
+            stack.push(chars[i]);
+        }
+        char[] result=new char[stack.size()];
+        int i=stack.size()-1;
+        while (!stack.isEmpty())
+        {
+            result[i]=stack.pop();
+            i--;
+        }
+        return String.valueOf(result);
+    }
+```
+
 ## 单调队列
 
 单调队列用来解决维护一个窗口，可以获得窗口中的最大值或者最小值

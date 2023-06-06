@@ -1,7 +1,7 @@
 ---
 layout: post
 title: LeetCode 刷题笔记
-date: 2023-5-29
+date: 2023-6-6
 catalog: true
 tags: [Java]
 subtitle: 持续更新...
@@ -507,5 +507,236 @@ class MonotonicQueue
         }
         return results;
     }
+```
+
+## 数据结构设计
+
+### LRU算法
+
+日常很多时候，有些题目不能使用已有的数据结构来解决，这种情况下就需要自己来设计适合这种题目的数据结构，例如力扣[146题](https://leetcode.cn/problems/lru-cache/)：
+
+根据题意，要求`put`以及`get`操作能够在`O(1)`的时间复杂度下完成，这样就最好不要采用暴力破解法来解题了
+
+根据题意：
+
+- 要求能够很快根据`key`来访问到`value`值，这种情况下我们就可以想到使用`哈希表`来实现
+- 缓存队列能够很快的进行更新操作，这样我们就会想到链表
+- 题目还要求根据优先级进行链表的更新，为了满足时间复杂度的要求，我们就可以想到使用双向链表来实现
+
+![数据结构图](https://s2.loli.net/2023/06/06/OzJTQ5adfPugx7o.png)
+
+还需要注意的一点是，链表中的节点优先级需要在以下几个情况下进行更新：
+
+- 节点被访问过
+- 节点被修改过
+
+根据节点优先级，在容量满了之后，剔除优先级最低的节点，**为了方便对`哈希表`中的元素进行`remove`操作，我们还需要在链表中存储`key`**，如上图所示
+
+![image-20230606160826211](https://s2.loli.net/2023/06/06/ZH16bXkBmuTSCeV.png)
+
+最终我的代码实现如下：
+
+```java
+class LRUCache
+    {
+        class DoublyListNode
+        {
+            int key;
+            int val;
+            DoublyListNode pre;
+            DoublyListNode next;
+
+            public DoublyListNode(int key,int val, DoublyListNode pre, DoublyListNode next) {
+                this.key=key;
+                this.val = val;
+                this.pre = pre;
+                this.next = next;
+            }
+        }
+        HashMap<Integer, DoublyListNode> hashMap;
+        DoublyListNode head;
+        int length;
+        int maxLength;
+        public LRUCache(int capacity)
+        {
+            this.hashMap=new HashMap<>();
+            maxLength=capacity;
+            head=new DoublyListNode(-1,-1,null,null);
+
+            length=0;
+        }
+
+        public int get(int key)
+        {
+            if(hashMap.containsKey(key))
+            {
+                DoublyListNode node=hashMap.get(key);
+                if(node.next!=null&&node.pre!=null)
+                {
+                    node.next.pre= node.pre;
+                    node.pre.next=node.next;
+                    node.next=head.next;
+                    head.next.pre=node;
+                    head.next=node;
+                    node.pre=head;
+
+                    return node.val;
+                }
+                if(node.next==null&&node.pre!=null)
+                {
+                    if(node.pre==head)
+                    {
+                        return node.val;
+                    }
+                    node.pre.next=null;
+
+                    node.next=head.next;
+                    head.next.pre=node;
+                    head.next=node;
+                    node.pre=head;
+                    return node.val;
+                }
+                if(node.pre==head)
+                {
+                    return node.val;
+                }
+
+
+            }
+            return -1;
+        }
+
+        public void put(int key, int value)
+        {
+            if(hashMap.containsKey(key))
+            {
+                hashMap.get(key).val=value;
+                DoublyListNode node=hashMap.get(key);
+                if(node.next!=null&&node.pre!=null)
+                {
+                    node.next.pre= node.pre;
+                    node.pre.next=node.next;
+                    node.next=head.next;
+                    head.next.pre=node;
+                    head.next=node;
+                    node.pre=head;
+                }
+                if(node.next==null&&node.pre!=null)
+                {
+                    if(node.pre!=head)
+                    {
+                        node.pre.next=null;
+
+                        node.next=head.next;
+                        head.next.pre=node;
+                        head.next=node;
+                        node.pre=head;
+                    }
+                }
+            }
+            else
+            {
+                DoublyListNode node=new DoublyListNode(key,value,null, null);
+                if(length<maxLength)
+                {
+                    if(length==0)
+                    {
+                        head.next=node;
+                        node.next=null;
+                        node.pre=head;
+                        length++;
+                    }
+                    else
+                    {
+                        node.next=head.next;
+                        head.next.pre=node;
+                        head.next=node;
+                        node.pre=head;
+                        length++;
+                    }
+                    hashMap.put(key, node);
+                }
+                else
+                {
+                    //移除最后一个节点
+                    DoublyListNode p=head;
+                    while (p.next.next!=null)
+                    {
+                        p=p.next;
+                    }
+                    hashMap.remove(p.next.key);
+                    p.next=null;
+                    if(head.next==null)
+                    {
+                        head.next=node;
+                        node.pre=head;
+                        hashMap.put(key, node);
+                    }
+                    else
+                    {
+                        node.next=head.next;
+                        head.next.pre=node;
+                        head.next=node;
+                        node.pre=head;
+                        hashMap.put(key, node);
+                    }
+                }
+            }
+        }
+    }
+```
+
+当然了，我们还可以不手搓链表，使用`Java`自带的`LinkedHashMap`来实现`LRU`算法
+
+```java
+class LRUCache 
+{
+    int cap;
+    LinkedHashMap<Integer, Integer> cache = new LinkedHashMap<>();
+    public LRUCache(int capacity)
+    {
+        this.cap = capacity;
+    }
+
+    public int get(int key) 
+    {
+        if (!cache.containsKey(key)) 
+        {
+            return -1;
+        }
+        // 将 key 变为最近使⽤
+        makeRecently(key);
+        return cache.get(key);
+    }
+
+    public void put(int key, int val) 
+    {
+        if (cache.containsKey(key)) 
+        {
+            // 修改 key 的值
+            cache.put(key, val);
+            // 将 key 变为最近使⽤
+            makeRecently(key);
+            return;
+        }
+
+        if (cache.size() >= this.cap) 
+        {
+            // 链表头部就是最久未使⽤的 key
+            int oldestKey = cache.keySet().iterator().next();
+            cache.remove(oldestKey);
+        }
+        // 将新的 key 添加链表尾部
+        cache.put(key, val);
+    }
+
+    private void makeRecently(int key) 
+    {
+        int val = cache.get(key);
+        // 删除 key，重新插⼊到队尾
+        cache.remove(key);
+        cache.put(key, val);
+    }
+}
 ```
 

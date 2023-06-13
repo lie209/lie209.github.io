@@ -1,10 +1,10 @@
 ---
 layout: post
 title: LeetCode 刷题笔记
-date: 2023-6-6
+date: 2023-6-13
 catalog: true
 tags: [Java]
-subtitle: 持续更新...
+subtitle: 持续更新，持续进步...
 ---
 
 # `LeetCode` 刷题笔记
@@ -738,5 +738,195 @@ class LRUCache
         cache.put(key, val);
     }
 }
+```
+
+### LFU缓存
+
+基于力扣[460题](https://leetcode.cn/problems/lfu-cache/)，这个同样是一个数据结构设计问题
+
+根据题意，需要满足以下几点：
+
+- 需要以`O(1)`的时间复杂度运行，这就想到了哈希表
+
+  ```java
+  LinkedHashMap<Integer,Integer> caches=new LinkedHashMap<>();
+  ```
+
+- 需要记录每个元素的访问时间，这也想到了哈希表
+
+  ```java
+  HashMap<Integer,Integer> keysCounts=new HashMap<>();
+  ```
+
+- 第三个，也是最关键的一个，需要获得最久未使用的键，可能有多个键的访问次数是一样的，而又需要获得最早的那个
+
+  而且还需要在`O(1)`的时间复杂度下
+
+  这就可以想到用`LinkedHashSet`，与`LinkedHashMap`类似，`LinkedHashSet`是有序的，**最后放入的元素在集合末尾，第一个元素在最前面**，因此，我们可以利用这个特性，获得同一访问次数下最久未被访问的键（因为每个键被访问的时候，访问次数都会加一）
+
+  ```java
+  HashMap<Integer, LinkedHashSet<Integer>> count2keys =new HashMap<>();
+  ```
+
+最终代码如下：
+
+```java
+class LFUCache {
+
+        LinkedHashMap<Integer,Integer> caches=new LinkedHashMap<>();
+        HashMap<Integer,Integer> keysCounts=new HashMap<>();
+        HashMap<Integer, LinkedHashSet<Integer>> count2keys =new HashMap<>();
+        int capacity;
+        public LFUCache(int capacity) {
+            this.capacity=capacity;
+        }
+
+        public int get(int key)
+        {
+            if(caches.containsKey(key))
+            {
+                int count=keysCounts.get(key);
+                keysCounts.replace(key,count+1);
+                count2keys.get(count).remove(key);
+                if(count2keys.containsKey(count+1))
+                {
+                    count2keys.get(count+1).add(key);
+                }
+                else
+                {
+                    count2keys.put(count+1, new LinkedHashSet<>());
+                    count2keys.get(count+1).add(key);
+                }
+                return caches.get(key);
+            }
+            else
+            {
+                return -1;
+            }
+
+        }
+
+        public void put(int key, int value)
+        {
+            if(caches.containsKey(key))
+            {
+                caches.replace(key,value);
+                //访问次数加一
+                int count=keysCounts.get(key);
+                keysCounts.replace(key, count+1);
+                count2keys.get(count).remove(key);
+                if(count2keys.containsKey(count+1))
+                {
+                    count2keys.get(count+1).add(key);
+                }
+                else
+                {
+                    count2keys.put(count+1, new LinkedHashSet<>());
+                    count2keys.get(count+1).add(key);
+                }
+            }
+            else
+            {
+                //没有满
+                if(caches.size()<this.capacity)
+                {
+                    caches.put(key, value);
+                    keysCounts.put(key, 1);
+                    if(count2keys.containsKey(1))
+                    {
+                        count2keys.get(1).add(key);
+                    }
+                    else
+                    {
+                        count2keys.put(1, new LinkedHashSet<>());
+                        count2keys.get(1).add(key);
+                    }
+                }
+                //满了
+                else
+                {
+                    //最小的访问次数
+                    int min=0;
+                    for(int i:count2keys.keySet())
+                    {
+                        if(count2keys.get(i).size()!=0)
+                        {
+                            min=i;
+                            break;
+                        }
+                    }
+                    int minKey=count2keys.get(min).iterator().next();
+                    caches.remove(minKey);
+                    count2keys.get(min).remove(minKey);
+                    keysCounts.remove(minKey);
+                    caches.put(key, value);
+                    keysCounts.put(key, 1);
+                    count2keys.get(1).add(key);
+                }
+            }
+        }
+    }
+```
+
+### 使用HashMap去重
+
+力扣[380题](https://leetcode.cn/problems/insert-delete-getrandom-o1/)
+
+看到题目可以有以下想法：
+
+- 需要是一个集合，不能有重复元素，这就可以想到使用`HashMap`进行去重，因为`HashMap`的键是不能重复的
+- 需要访问随机索引的值，那就可以想到用`List`
+- 需要删除元素，那么我们就可以**将要删除的元素的值与最后一个值进行交换，删除最后一个元素**就行了，这样也可以避免移动元素增加时间开销
+
+综上，代码如下：
+
+`HashMap`存储元素与其在`list`中索引的映射，（ value --> index ）`length`存储最后一个元素的索引位置
+
+```java
+class RandomizedSet {
+        HashMap<Integer,Integer> hashMap;
+        List<Integer> list;
+        int length;
+
+        public RandomizedSet() {
+            this.hashMap=new HashMap<>();
+            this.list=new ArrayList<>();
+            this.length=0;
+        }
+
+        public boolean insert(int val)
+        {
+            if(!hashMap.containsKey(val))
+            {
+                list.add(val);
+                hashMap.put(val, length);
+                length++;
+                return true;
+            }
+            return false;
+        }
+
+        public boolean remove(int val)
+        {
+            if(hashMap.containsKey(val))
+            {
+                //目标值
+                int index=hashMap.get(val);
+                list.set(index,list.get(length-1));
+                hashMap.replace(list.get(index), index);
+                list.remove(length-1);
+                length--;
+                hashMap.remove(val);
+                return true;
+            }
+            return false;
+        }
+
+        public int getRandom()
+        {
+            int index=new Random().nextInt(length);
+            return this.list.get(index);
+        }
+    }
 ```
 

@@ -930,3 +930,96 @@ class RandomizedSet {
     }
 ```
 
+### 索引值映射
+
+力扣[710题](https://leetcode.cn/problems/random-pick-with-blacklist/)
+
+乍一看，这题可以使用一个数组，然后把其中在黑名单内的元素去除，然后使用随即索引访问即可，我尝试了，但这样的话就`OOM`了
+
+第二种方法是使用哈希表来映射，主要思想如下：
+
+- 最后使用随机索引查找的范围是`n-blacklist.length`，设这个值为边界值`bound`
+- 我们只需要将`bound`内部的`blacklist`中的值，映射到`bound`外面的非`blacklist`值即可
+
+我的第一种代码如下：
+
+```java
+class Solution
+    {
+        HashMap<Integer,Integer> hashMap;
+        int bound;
+        public Solution(int n, int[] blacklist)
+        {
+            bound=n-blacklist.length;
+            hashMap=new HashMap<>();
+            HashSet<Integer> set=new HashSet<>();
+            for (int i :blacklist)
+            {
+                set.add(i);
+            }
+            int i=0;
+            int last=n-1;
+            while (i<bound)
+            {
+                if(set.contains(i))
+                {
+                    while (set.contains(last))
+                    {
+                        last--;
+                    }
+                    hashMap.put(i, last);
+                    last--;
+                }
+                i++;
+            }
+        }
+        public int pick()
+        {
+            Random random=new Random();
+            int index=random.nextInt(bound);
+            return hashMap.getOrDefault(index, index);
+        }
+    }
+```
+
+可惜最后提交超时了，原因在于在构造映射哈希表的时候，查找范围定的太大了，在所有的`bound`里面查找，但是可以不需要这样，只需要**在`bound`内部的`blacklist`元素中查找**就行了
+
+```java
+class Solution
+    {
+        HashMap<Integer,Integer> hashMap;
+        int bound;
+        public Solution(int n, int[] blacklist)
+        {
+            bound=n-blacklist.length;
+            hashMap=new HashMap<>();
+            HashSet<Integer> set=new HashSet<>();
+            for (int i :blacklist)
+            {
+                set.add(i);
+            }
+            //指向边界值外部不在blacklist中的值
+            int outBound=bound;
+            //只在黑名单内部查找，就少了很多遍历和判断的步骤
+            for(int i :blacklist)
+            {
+                if(i<bound)
+                {
+                    while (set.contains(outBound))
+                    {
+                        outBound++;
+                    }
+                    hashMap.put(i,outBound);
+                    outBound++;
+                }
+            }
+        }
+        public int pick()
+        {
+            Random random=new Random();
+            int index=random.nextInt(bound);
+            return hashMap.getOrDefault(index, index);
+        }
+    }
+```
+

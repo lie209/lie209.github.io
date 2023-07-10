@@ -1,7 +1,7 @@
 ---
 layout: post
 title: LeetCode 刷题笔记
-date: 2023-6-13
+date: 2023-7-4
 catalog: true
 tags: [Java]
 subtitle: 持续更新，持续进步...
@@ -155,7 +155,7 @@ Your memory usage beats 44.73 % of java submissions (44.3 MB)
 
 > 最小堆指的是根节点的值小于所有其他堆节点的值
 
-> 在`Java`中可以使用`PriorityQueue`来实现和使用最小堆
+> 在`Java`中可以使用`PriorityQueue`来实现和使用最小堆，默认堆顶是最小值
 
 `Java`中的优先级队列基于堆排序实现，具体底层实现可见[此处](https://mp.weixin.qq.com/s/o7tdyLiYm668dpUWd-x7Lg)
 
@@ -1020,6 +1020,214 @@ class Solution
             int index=random.nextInt(bound);
             return hashMap.getOrDefault(index, index);
         }
+    }
+```
+
+### 数据流的中位数
+
+力扣[295题](https://leetcode.cn/problems/find-median-from-data-stream/)，题目要求很快获得一个数据流的中位数，而且需要不断往数据流中动态添加数据，有一种很巧妙的做法，使用两个优先级队列，两个队列可以自动排序，将序列分成两堆，就很容易获得中位数了
+
+使用一个大顶堆，一个小顶堆：
+
+- 大顶堆的每个节点的值大于等于左右孩子节点的值，堆顶为最大值
+- 小顶堆的每个节点的值小于等于左右孩子节点的值，堆顶为最小值
+
+![41-1.png](https://pic.leetcode-cn.com/1638802694-YTYpGU-41-1.png)
+
+我们要保证每次插入元素后，两堆维持相对长度。让minHeap为长度较大的堆，每次插入元素时进行判断：
+
+- 当两堆总长度为偶数时，即两堆长度相等，将新元素插入到minHeap，插入后minHeap比maxHeap长度大1；
+- 当两堆总长度为奇数时，即两堆长度不等，将新元素插入到maxHeap，插入后两堆长度相等；
+
+还要保证插入元素后，两堆仍是保证从下往上递增的顺序性。如上面的偶数情况，将新元素x直接插入到minHeap，是有可能破坏两堆的顺序性的，例如：（minHeap是存储“较大一半”的值）
+
+若x的值恰好为“较大一半”，直接将插入到“较大一半”的minHeap中，是不会破坏顺序的；
+若x的值为“较小一半”，而此时却插入到“较大一半”的minHeap中，是会破坏顺序的。
+那么，每次新元素插入时，都需要先插入到另一个堆，进行重新排序后，再将最值拿出来插入正确的堆中。因此，最终得出的结论为：
+
+- 当两堆总大小为偶数时，即两堆大小相等，先将新元素插入maxHeap，重新排序后将新的最值拿出并插入到minHeap；
+- 当两堆总大小为奇数时，即两堆大小不等，先将新元素插入minHeap，重新排序后将新的最值拿出并插入到maxHeap；
+
+代码实现如下：
+
+```java
+	class MedianFinder 
+    {
+        PriorityQueue<Integer> queue1;
+        PriorityQueue<Integer> queue2;
+        int mid;
+        public MedianFinder() 
+        {
+			//小顶堆，放比中位数大的数
+            this.queue1=new PriorityQueue<>((a,b)->(a-b));
+			//大顶堆，放比中位数小的数
+            this.queue2=new PriorityQueue<>((a,b)->(b-a));
+        }
+        public void addNum(int num)
+        {
+            //如果两个堆长度相等
+            if(queue1.size()==queue2.size())
+            {
+                //先放到下面这个堆中排序，然后放到上面
+                queue2.offer(num);
+                queue1.offer(queue2.poll());
+                return;
+            }
+            //如果长度不等
+            if(queue1.size()!=queue2.size())
+            {
+                //先放到上面这个堆排序，然后加入下面这个堆
+                queue1.offer(num);
+                queue2.offer(queue1.poll());
+                return;
+            }
+        }
+
+        public double findMedian()
+        {
+            //题目中说至少有一个元素
+            if(queue1.size()==queue2.size())
+            {
+                return (queue1.peek()+queue2.peek())/2.0;
+            }
+            else
+            {
+                return queue1.peek();
+            }
+        }
+    }
+```
+
+## 二叉树
+
+### 概念
+
+- 种类
+
+  - 满二叉树
+  - 完全二叉树
+  - 二叉搜索树
+  - 平衡二叉搜索树
+
+- 存储方式
+
+  - 链式存储
+  - 数组存储
+
+- 遍历方式
+
+  - 深度优先搜索
+
+    搜到底回去
+
+  - 广度优先搜索
+
+    一层一层遍历（在图里面是一圈一圈遍历）
+
+### 构造虚拟化结构辅助解题
+
+如力扣[116题](https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/)
+
+要求求每个节点下一个右侧节点的指针
+
+![img](https://assets.leetcode.com/uploads/2019/02/14/116_sample.png)
+
+需要注意的是，每个节点默认的`next`是`null`
+
+然后就可以在**左右节点中间**构造出一个虚拟的节点，遍历的时候，每次遍历只做一个操作
+
+![image-20230710152747378](https://s2.loli.net/2023/07/10/pL1VWaXlrDUQzxf.png)
+
+代码如下：
+```java
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+    
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+
+class Solution {
+    
+        public Node connect(Node root)
+    {
+        if (root==null)
+        {
+            return null;
+        }
+        traverse(root.left,root.right);
+        return root;
+    }
+
+    public void traverse(Node left,Node right)
+    {
+        if (left == null || right == null) {
+            return;
+        }
+            left.next = right;
+            traverse(left.left, left.right);
+            //连接虚拟节点的左右子节点
+            traverse(left.right, right.left);
+            traverse(right.left, right.right);
+            return;
+    }
+}
+```
+
+或者也可以不使用递归，使用两个队列交替使用，对**完美二叉树**进行层次遍历：
+
+```java
+public Node run(Node root)
+    {
+        if(root==null)
+        {
+            return null;
+        }
+        Queue<Node> queue1=new LinkedList<>();
+        queue1.offer(root);
+        Queue<Node> queue2=new LinkedList<>();
+        while (!queue1.isEmpty()||!queue2.isEmpty())
+        {
+            while (!queue1.isEmpty())
+            {
+                //完美二叉树所以这么处理
+                Node node=queue1.poll();
+                node.next=queue1.peek();
+                //完美二叉树，有left必有right
+                if (node.left!=null)
+                {
+                    queue2.offer(node.left);
+                    queue2.offer(node.right);
+                }
+            }
+            while (!queue2.isEmpty())
+            {
+                Node node=queue2.poll();
+                node.next=queue2.peek();
+                if(node.left!=null)
+                {
+                    queue1.offer(node.left);
+                    queue1.offer(node.right);
+                }
+            }
+        }
+        return root;
     }
 ```
 

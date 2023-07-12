@@ -1231,3 +1231,81 @@ public Node run(Node root)
     }
 ```
 
+### 二叉树的构造
+
+关于二叉树的很多都是使用递归来解决问题，利用递归一般主要采用两种思维方式
+
+- **是否可以通过遍历⼀遍⼆叉树得到答案？**则使用一个 traverse 函数配合外部变量来解决问题，这叫「遍历」的思维模式
+- **是否可以定义⼀个递归函数，通过子问题（子树）的答案推导出原问题的答案？**如果可以，写出这个递归函数的定义，并充分利用这个函数的返回值，这叫「分解问题」的思维模式
+
+利用递归来求解，需要思考：
+**如果单独抽出⼀个二叉树节点，它需要做什么事情？需要在什么时候（前/中/后序位置）做？其他的节点不用管，递归函数会帮你在所有节点上执行相同的操作**
+
+如力扣[105题](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+该题的主要思维方式也是递归，每次做相同的操作，层层深入，层层求解
+
+这题搞清楚坐标，然后递归深入便可求解
+
+> 将大问题简化为递归过程中的小问题，已本题为例，一开始的这个根节点，左右子树和递归过程中小问题里面的根节点，左右子树，差异并不大，也就是简化思维
+
+![image-20230711143916462](https://s2.loli.net/2023/07/11/dnKX4RbUPCwV38k.png)
+
+```java
+    public TreeNode buildTree(int[] preorder, int[] inorder)
+    {
+        return  buildTree(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+    }
+
+    public TreeNode buildTree(int[] preorder,int preLeft,int preRight,int[] inorder,int inLeft,int inRight)
+    {
+        if(preLeft>preRight||inLeft>inRight)
+        {
+            return null;
+        }
+        int rootVal=preorder[preLeft];
+        //这一步实现了本次递归的操作，可以通过空间换时间的哈希表进行优化
+        int rootIndex= Arrays.stream(inorder).boxed().toList().indexOf(rootVal);
+        TreeNode root=new TreeNode(rootVal);
+        root.left=buildTree(preorder,preLeft+1,preLeft+rootIndex-inLeft,inorder,inLeft,rootIndex-1);
+        root.right=buildTree(preorder,preLeft+rootIndex-inLeft+1,preRight,inorder,rootIndex+1,inRight);
+        return root;
+    }
+```
+
+再如力扣[889题](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-postorder-traversal/)
+
+同样也是二叉树构造的题目，通过⼆叉树的构造问题⼀般都是使用「分解问题」的思路：
+
+**构造整棵树 = 根节点 + 构造左子树+构造右子树**。先找出根节点，然后根据根节点的值找到左右⼦树的元素，进而递归构建出左右⼦树。
+
+```java
+    public TreeNode constructFromPrePost(int[] preorder, int[] postorder)
+    {
+        return buildTree(preorder,postorder,0,preorder.length-1,0,postorder.length-1);
+    }
+
+    public TreeNode buildTree(int[] preorder, int[] inorder,int preLeft,int preRight, int inLeft, int inRight)
+    {
+        if(preLeft > preRight||inLeft>preRight)
+        {
+            return null;
+        }
+        if(preLeft==preRight)
+        {
+            return new TreeNode(preorder[preLeft]);
+        }
+        if(inLeft==inRight)
+        {
+            return new TreeNode(inorder[inLeft]);
+        }
+        int rootVal = preorder[preLeft];
+        TreeNode root=new TreeNode(rootVal);
+        int index= Arrays.stream(inorder).boxed().toList().indexOf(preorder[preLeft+1]);
+        int size=index-inLeft+1;
+        root.left= buildTree(preorder,inorder,preLeft+1,preLeft+size,inLeft,index);
+        root.right=buildTree(preorder,inorder,preLeft+size+1,preRight,index+1,inRight-1);
+        return root;
+    }
+```
+

@@ -1239,7 +1239,7 @@ public Node run(Node root)
 - **是否可以定义⼀个递归函数，通过子问题（子树）的答案推导出原问题的答案？**如果可以，写出这个递归函数的定义，并充分利用这个函数的返回值，这叫「分解问题」的思维模式
 
 利用递归来求解，需要思考：
-**如果单独抽出⼀个二叉树节点，它需要做什么事情？需要在什么时候（前/中/后序位置）做？其他的节点不用管，递归函数会帮你在所有节点上执行相同的操作**
+**如果单独抽出⼀个二叉树节点，它需要做什么事情？需要在什么时候（前/中/后序位置）做？其他的节点不用管，递归函数会帮你在所有节点上执行相同的操作（仅一次操作，不要想多了，想多了会绕进去）**
 
 如力扣[105题](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
 
@@ -1306,6 +1306,855 @@ public Node run(Node root)
         root.left= buildTree(preorder,inorder,preLeft+1,preLeft+size,inLeft,index);
         root.right=buildTree(preorder,inorder,preLeft+size+1,preRight,index+1,inRight-1);
         return root;
+    }
+```
+
+### 去除重复二叉树
+
+如力扣[652题](https://leetcode.cn/problems/find-duplicate-subtrees/)
+
+![image-20230714160202185](https://s2.loli.net/2023/07/14/ntWBucqQ97oEAJs.png)
+
+由题，可以想到：
+
+- 去重，可以使用**哈希表**
+- 对比，一开始想到使用`List<Integer>`这种方式来记录遍历的序列，其实使用**字符串**是最方便的
+- 为了降低开销，可以边生成字符串边对比
+
+最后代码如下：
+```java
+HashMap<String,Integer> map = new HashMap<>();
+    List<TreeNode> result=new ArrayList<>();
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root)
+    {
+        traversal(root);
+        return result;
+    }
+    public String traversal(TreeNode root)
+    {
+        if(root==null) {
+            return "#";
+        }
+        //加空格防止1 11 #和11 1 #这种情况
+        String str=root.val+" "+traversal(root.left)+" "+traversal(root.right);
+        //题目要求返回一颗子树即可
+        if(map.containsKey(str)&&map.get(str)==1)
+        {
+            result.add(root);
+            map.replace(str,map.get(str)+1);
+        }
+        if(!map.containsKey(str))
+        {
+            map.put(str,1);
+        }
+        return str;
+    }
+```
+
+### 删除二叉搜索树中的节点
+
+力扣[450题](https://leetcode.cn/problems/delete-node-in-a-bst/)
+
+通过交换节点值的方法来删除太过于繁琐，所以通过一个简单的规则来删除节点：
+
+根据二叉搜索树的性质：
+
+- 如果目标节点大于当前节点值，则去右子树中删除；
+- 如果目标节点小于当前节点值，则去左子树中删除；
+- 如果目标节点就是当前节点，分为以下三种情况：
+  - 其无左子：其右子顶替其位置，删除了该节点；
+  - 其无右子：其左子顶替其位置，删除了该节点；
+  - 其左右子节点都有：其左子树转移到其右子树的最左节点的左子树上，然后右子树顶替其位置，由此删除了该节点。
+
+第三种情况如图：
+
+![450.jpg](https://pic.leetcode-cn.com/1611932922-MelojG-450.jpg)
+
+代码如下：
+
+```java
+public TreeNode deleteNode(TreeNode root, int key)
+    {
+        if(root==null)
+        {
+            return null;
+        }
+        if(key==root.val)
+        {
+            if(root.left==null && root.right==null)
+            {
+                return null;
+            }
+            if(root.right==null)
+            {
+                return root.left;
+            }
+            if(root.left==null)
+            {
+                return root.right;
+            }
+            TreeNode right=root.right;
+            TreeNode left=root.left;
+            TreeNode p=right;
+            while (p.left!= null)
+            {
+                p=p.left;
+            }
+            p.left=left;
+            root=root.right;
+        }
+        if(key>root.val)
+        {
+            //需要注意递归的思想，从一个更高的角度来思考就可以写出递归
+            root.right=deleteNode(root.right, key);
+        }
+        if(key<root.val)
+        {
+            root.left=deleteNode(root.left, key);
+        }
+        return root;
+    }
+```
+
+## 回溯法
+
+### 基础框架
+
+例如力扣[46题](https://leetcode.cn/problems/permutations/)
+
+![image-20230724174642491](https://s2.loli.net/2023/07/24/cUw8ELgDeNK1HTx.png)
+
+利用递归的思想，代码如下：
+
+```java
+    List<List<Integer>> result=new ArrayList<>();
+    public List<List<Integer>> permute(int[] nums)
+    {
+        int[] used=new int[nums.length];
+        for(int i:used)
+        {
+            i=0;
+        }
+        List<Integer> temp=new ArrayList<>();
+        backTrack(nums, used, temp);
+        return result;
+    }
+
+    public void backTrack(int[] nums,int[] used,List<Integer> track)
+    {
+        if(track.size()==nums.length)
+        {
+            result.add(new ArrayList<>(track));
+            return;
+        }
+        for(int i=0;i<nums.length;i++)
+        {
+            if(used[i]==0)
+            {
+                //本次使用第i个数
+                used[i]=1;
+                track.add(nums[i]);
+                backTrack(nums,used,track);
+                //第i个数用过了，恢复成原样，不然会导致他始终是使用的状态
+                track.remove(track.size()-1);
+                used[i]=0;
+            }
+        }
+    }
+```
+
+需要注意的是，直接做:
+
+```
+result.add(track);
+```
+
+会有问题。因为track是一个引用,每次backtrack递归的时候,track都在原地被修改。如果直接把track添加到result,会导致result里的所有permutation列表都是一模一样的,都引用了同一个track。
+
+所以需要创建一个新的ArrayList,并传入track,来copy track的内容
+
+### 回溯法的终极奥义
+
+回溯法归根结底就是在一个树上搜索，每一个for循环就代表，搜索树上同一层的节点
+
+这样的话，剪枝就好理解了
+
+例如力扣[40题](https://leetcode.cn/problems/combination-sum-ii/description/)
+
+![image-20230725193823905](https://s2.loli.net/2023/07/25/ebD267JlFPgTW3V.png)
+
+- 这种题目，一般可以先排个序，这样后面或许可以避免潜在的问题
+- **要求集合内元素的和等于target，那么就需要一个List不断保存搜索过程中路径上的值，以及方法可能需要的其他的中间值**，这就是确定方法参数的方法
+- 要求不能包含重复的，那么就可以在搜索的过程中限制**树的起点**，也就是**for循环的起点**
+- 同时，还要求搜索的过程中不会又搜索到前面的节点，比如说1，1，2之类的情况，就需要在第一个1搜索结束后，将树的搜索起点放到非1的元素那里
+
+综上，代码如下：
+```java
+    List<List<Integer>> result=new ArrayList<>();
+    public List<List<Integer>> combinationSum2(int[] candidates, int target)
+    {
+        Arrays.sort(candidates);
+        backTrack(candidates,target,new ArrayList<>(),0,0);
+        return result;
+    }
+
+    public void  backTrack(int[] nums, int target,List<Integer> list,int cur,int begin)
+    {
+        if(cur==target)
+        {
+            result.add(new ArrayList<>(list));
+            return;
+        }
+        for (int i=begin;i<nums.length;i++)
+        {
+            if(cur+nums[i]<=target)
+            {
+                list.add(nums[i]);
+                backTrack(nums,target,list,cur+nums[i],i+1);
+                list.remove(list.size()-1);
+                while (i+1<nums.length&&nums[i+1]==nums[i])
+                {
+                    i++;
+                }
+            }
+        }
+    }
+```
+
+### 岛屿问题
+
+**一般这种情况都是把访问过的岛屿用水淹了**
+
+力扣[200题](https://leetcode.cn/problems/number-of-islands/)
+
+![image-20230726144421500](https://s2.loli.net/2023/07/26/sg3VHtFxoTLSOdz.png)
+
+这道题具体思路是：
+
+遍历数组，遇到一个陆地，结果加一，然后把相邻的陆地给淹了，代码如下：
+
+```java
+    int result;
+    int m,n;
+    int[][] visited;
+    //把访问过的陆地以及旁边的陆地都淹掉
+    public int numIslands(char[][] grid)
+    {
+        m=grid.length;
+        n= grid[0].length;
+        visited=new int[m][n];
+        for (int i=0;i<m;i++)
+        {
+            for (int j=0;j<n;j++)
+            {
+                if (grid[i][j]=='1' && visited[i][j]==0)
+                {
+                    result++;
+                    backTrack(grid,i,j);
+                }
+            }
+        }
+        return result;
+    }
+
+    public void backTrack(char[][] grid, int i,int j)
+    {
+        if(i<0 || i>=m || j<0 || j>=n)
+            return;
+        if(visited[i][j]==1)
+            return;
+        visited[i][j]=1;
+        if(grid[i][j]=='0')
+        {
+            return;
+        }
+        else
+        {
+            grid[i][j]='0';
+            backTrack(grid, i-1, j);
+            backTrack(grid, i, j-1);
+            backTrack(grid, i, j+1);
+            backTrack(grid, i+1, j);
+        }
+
+    }
+```
+
+再如力扣[1254题](https://leetcode.cn/problems/number-of-closed-islands/)
+
+![image-20230726145028271](https://s2.loli.net/2023/07/26/lKqw7E4yJ21uLOh.png)
+
+统计封闭岛屿数量，由题意可知，数组边缘的岛屿都是不符合要求的，只需要这些岛屿淹掉，然后再次使用上面的方法即可，代码如下：
+
+```java
+    int m,n;
+    int[][] visited;
+    public int closedIsland(int[][] grid)
+    {
+        m=grid.length;
+        n=grid[0].length;
+        visited=new int[m][n];
+        int result=0;
+        //把边缘的岛屿淹了
+        for (int i=0; i<m; i++)
+        {
+            if(i==0)
+            {
+                for (int j=0;j<n;j++)
+                {
+                    if(grid[0][j]==0)
+                    {
+                        backTrack(grid,0,j);
+                    }
+                }
+            }
+            if(i!=0&&grid[i][0]==0)
+            {
+                backTrack(grid,i,0);
+            }
+            if(i!=0&&grid[i][n-1]==0)
+            {
+                backTrack(grid,i,n-1);
+            }
+            if(i==m-1)
+            {
+                for (int j=0;j<n;j++)
+                {
+                    if(grid[m-1][j]==0)
+                    {
+                        backTrack(grid,m-1,j);
+                    }
+                }
+            }
+        }
+        //复用第200题的方法
+        for (int i = 0; i < m; i++) {
+            for (int j=0;j<n;j++)
+            {
+                if(grid[i][j]==0&&visited[i][j]==0)
+                {
+                    result++;
+                    backTrack(grid,i,j);
+                }
+            }
+        }
+        return result;
+    }
+
+    public void backTrack(int[][] grid, int i, int j)
+    {
+
+        if (i<0 || i>=m || j<0 || j>=n)
+            return;
+        if(visited[i][j]==1)
+        {
+            return;
+        }
+        visited[i][j]=1;
+        if(grid[i][j]==1)
+        {
+            return;
+        }
+        grid[i][j]=1;
+        backTrack(grid,i-1,j);
+        backTrack(grid, i+1, j);
+        backTrack(grid, i, j+1);
+        backTrack(grid, i, j-1);
+    }
+```
+
+再如力扣[1905题](https://leetcode.cn/problems/count-sub-islands)
+
+![image-20230726171104099](https://s2.loli.net/2023/07/26/U3O8spdjLmQSTx7.png)
+
+
+
+第一种思路是，只遍历岛屿2，遍历的过程中检查该块区域在不在岛屿1中
+
+代码如下：
+
+```java
+    int m,n;
+    int[][] visited1,visited2;
+    int[][] grid3;
+    int count=0;
+    public int countSubIslands(int[][] grid1, int[][] grid2)
+    {
+        m=grid1.length;
+        n=grid1[0].length;
+        grid3=grid1;
+        visited1=new int[m][n];
+        visited2=new int[m][n];
+        int result=0;
+        for(int i=0;i<m;i++) {
+            for (int j = 0; j < n; j++)
+            {
+                if(grid2[i][j]==1&&visited2[i][j]==0)
+                {
+                    count=0;
+                    List<Integer> list=backTrack(grid2,visited2,i,j,new ArrayList<>());
+                    if(count==list.size())
+                    {
+                        result++;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<Integer> backTrack(int[][] grid,int[][] visited,int i,int j,List<Integer> list)
+    {
+        if(i<0||j<0||i>=m||j>=n||visited[i][j]==1||grid[i][j]==0)
+        {
+            return list;
+        }
+        visited[i][j]=1;
+        if(grid[i][j]==grid3[i][j])
+        {
+            count++;
+        }
+        grid[i][j]=0;
+        list.add(grid[i][j]);
+        backTrack(grid,visited,i,j-1, list);
+        backTrack(grid,visited,i,j+1,list);
+        backTrack(grid,visited,i+1, j,list);
+        backTrack(grid,visited,i-1,j,list);
+        return list;
+    }
+```
+
+第二种方法是，先排除岛屿2中不在一中的岛屿，再查找岛屿2中岛屿数量
+
+代码如下：
+
+```java
+    int m,n;
+    int[][] visited1,visited2;
+    int[][] grid3;
+    public int countSubIslands(int[][] grid1, int[][] grid2)
+    {
+        m=grid1.length;
+        n=grid1[0].length;
+        grid3=grid1;
+        visited1=new int[m][n];
+        visited2=new int[m][n];
+        int result=0;
+        for(int i=0;i<m;i++) {
+            for (int j = 0; j < n; j++)
+            {
+                if(grid2[i][j]==1&&grid1[i][j]==0)
+                {
+                    backTrack(grid2,visited2,i,j,new ArrayList<>());
+                }
+            }
+        }
+        for(int i=0;i<m;i++) {
+            for (int j = 0; j < n; j++)
+            {
+                if(grid2[i][j]==1&&visited2[i][j]==0)
+                {
+                    result++;
+                    backTrack(grid2,visited2,i,j,new ArrayList<>());
+                }
+            }
+        }
+        return result;
+    }
+    public List<Integer> backTrack(int[][] grid,int[][] visited,int i,int j,List<Integer> list)
+    {
+        if(i<0||j<0||i>=m||j>=n||visited[i][j]==1||grid[i][j]==0)
+        {
+            return list;
+        }
+        visited[i][j]=1;
+        if(grid[i][j]==grid3[i][j])
+
+        grid[i][j]=0;
+        list.add(grid[i][j]);
+        backTrack(grid,visited,i,j-1, list);
+        backTrack(grid,visited,i,j+1,list);
+        backTrack(grid,visited,i+1, j,list);
+        backTrack(grid,visited,i-1,j,list);
+        return list;
+    }
+```
+
+## BFS
+
+### 基本框架
+
+广度优先搜索（层次优先搜索），基本上都是使用队列来实现一层一层的搜索
+
+例如力扣[752题](https://leetcode.cn/problems/open-the-lock/)
+
+![image-20230727121147402](https://s2.loli.net/2023/07/27/oMHzVe2c3LQEUtw.png)
+
+这个题目就类似于图的层次搜索，每一次搜索后，该结果就会生成8种其他的结果，再在下一层的结果上继续搜索，代码如下，
+
+具体还使用了几种优化方法：
+
+- 使用了Set来判断是否包含在内
+- 使用Visited进行剪枝操作
+
+```java
+    public int openLock(String[] deadends, String target)
+    {
+        Queue<String> queue = new LinkedList<>();
+        Set<String> deadSet=new HashSet<>();
+        for (String s : deadends)
+            deadSet.add(s);
+        queue.offer("0000");
+        //剪枝，避免回头路
+        HashSet<String> visited=new HashSet<>();
+        visited.add("0000");
+        int depth=0;
+        while (!queue.isEmpty())
+        {
+            int size=queue.size();
+            for (int i = 0; i < size; i++)
+            {
+                String cur=queue.poll();
+                //向周围扩散============================================
+                //使用Set快速判断包含关系
+                if(deadSet.contains(cur))
+                {
+                    continue;
+                }
+                if(cur.equals(target))
+                {
+                    return depth;
+                }
+                for (int j = 0; j < 4; j++)
+                {
+                    String plusOne=plusOne(cur,j);
+                    String minusOne=minusOne(cur,j);
+                    if(!visited.contains(plusOne))
+                    {
+                        visited.add(plusOne);
+                        queue.offer(plusOne);
+                    }
+                    if(!visited.contains(minusOne))
+                    {
+                        visited.add(minusOne);
+                        queue.offer(minusOne);
+                    }
+                }
+                //==================================================
+            }
+            depth++;
+        }
+        return -1;
+    }
+	
+    public String plusOne(String s,int i)
+    {
+        char[] sc=s.toCharArray();
+        if(sc[i]=='9')
+            sc[i]='0';
+        else
+            sc[i]=(char)(sc[i]+1);
+        return new String(sc);
+    }
+    public String minusOne(String s,int i)
+    {
+        char[] sc=s.toCharArray();
+        if(sc[i]=='0')
+            sc[i]='9';
+        else
+            sc[i]=(char)(sc[i]-1);
+        return new String(sc);
+    }
+```
+
+### 根本思想
+
+BFS 算法并不只是⼀个寻路算法，⽽**是⼀种暴⼒搜索算法，只要涉及暴⼒穷举的问题，BFS 就可以⽤，⽽且可以最快地找到答案**
+
+例如力扣[773题](https://leetcode.cn/problems/sliding-puzzle/)
+
+![image-20230727153046127](https://s2.loli.net/2023/07/27/qz72TBrdQVAKvas.png)
+
+同样也是搜索法，想象成一个结果不断向外扩散，广度优先搜索，求最早的获得满足条件结果的搜索层数
+
+本题要点如下：
+
+- 我们需要达到什么样情况,就说明已经完成,找出最后跳出条件
+- 因为board是二维数组,对计算机不是很友好,如果能转化成一维的数组,那就好了（使用String判断）
+- 要记录已经访问过的情况,不能重复访问,造成死循环（使用Visited Set 存储访问过的节点）
+
+代码如下：
+
+```java
+class Solution {
+    public int slidingPuzzle(int[][] board)
+    {
+        int[][] dirs = {{1, 3}, {0, 2, 4}, {1, 5}, {0, 4}, {1, 3, 5}, {2, 4}};
+        StringBuilder s=new StringBuilder();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                s.append(board[i][j]);
+            }
+        }
+        Queue<String> queue=new LinkedList<>();
+        queue.add(s.toString());
+        HashSet<String> set=new HashSet<>();
+        String result="123450";
+        set.add(result);
+        int step=0;
+        while (!queue.isEmpty()) {
+
+            int size = queue.size();
+
+            for (int i = 0; i < size; i++)
+            {
+                String sq=queue.poll();
+                if(sq.equals(result))
+                {
+                    return step;
+                }
+                if(set.contains(sq))
+                {
+                    continue;
+                }
+                set.add(sq);
+                int index0=getIndex(sq);
+                for (int j:dirs[index0])
+                {
+                    char[] sc=sq.toCharArray();
+                    char temp=sc[j];
+                    sc[j]=sc[index0];
+                    sc[index0]=temp;
+                    String st=new String(sc);
+                    queue.add(st);
+                }
+            }
+            step++;
+        }
+        return -1;
+    }
+	//获得0在字符串中的位置
+    public int getIndex(String s)
+    {
+        char[] sc=s.toCharArray();
+        for (int i = 0; i < sc.length; i++)
+        {
+            if(sc[i]=='0')
+            {
+                return i;
+            }
+
+        }
+        return -1;
+    }
+}
+```
+
+## 动态规划
+
+**动态规划本质上就是一种穷举**，只不过是递进的穷举，当前状态的值是上一个状态所有可能的最优解“加上1”（或者其他处理方式）
+
+**动态规划就是一步一步穷举出最优的状态（或者说情况），堆叠成了全局最优解**
+
+### 一维的穷举
+
+如力扣[300题](https://leetcode.cn/problems/longest-increasing-subsequence/)
+
+![image-20230730004514415](https://s2.loli.net/2023/07/30/yM8bRnIsPBYUm9S.png)
+
+本题要求求最长的递增子序列，就可以有如下思路：
+
+- 序列长度为0时，长度为0
+- 序列长度大于0时，当前最长的递增子序列长度，就是把当前元素加到前面的最长的递增子序列中时的长度（就是找当前状态前面的最优解再加1）
+
+代码如下：
+
+```java
+    public int lengthOfLIS(int[] nums)
+    {
+        int[] dp=new int[nums.length];
+        dp[0]=1;
+        int max=1;
+        for(int i=1;i<nums.length;i++)
+        {
+            //初始化为1
+            dp[i]=1;
+            //在前面找最优的
+            for(int j=0;j<i;j++)
+            {
+                if(nums[i]>nums[j])
+                {
+                    dp[i]=Math.max(dp[i],dp[j]+1);
+                }
+            }
+            max=Math.max(max,dp[i]);
+        }
+        return max;
+    }
+```
+
+### 求最长递增子序列的优化（二分法）
+
+主要思想：
+
+- 建立一个一维数组cell，用于存放最长递增子序列的内容
+
+- 对于原序列中的每个元素，如果当前cell序列中没有比当前元素大，则将当前元素添加到cell序列中（cell末尾）
+
+- 如果有元素比当前元素大，则将当前元素替换cell中第一个比它大的元素**（尽可能压缩最长子序列的范围）**
+
+  > 使用Arrays.*binarySearch*实现
+
+代码如下：
+
+```java
+	public int getMaxLength(int[] nums)
+    {
+        int[] cell=new int[nums.length];
+        cell[0]=nums[0];
+        //要插入的点的索引
+        int res=1;
+        for (int i=1;i<nums.length;i++)
+        {
+            if(nums[i]>cell[res-1])
+            {
+                cell[res]=nums[i];
+                res++;
+            }
+            else
+            {
+                //将当前元素与cell中比当前元素大的第一个元素进行交换
+                int index=Arrays.binarySearch(cell,0,res,nums[i]);
+                if(index<0)
+                {
+                    int index1=-index-1;
+                    cell[index1]=nums[i];
+                }
+            }
+        }
+        return res;
+    }
+```
+
+
+
+### 二维的穷举
+
+上一题的情况是一维的，意味着当前状态的上一种状态的最有情况从一种状态集合中就能找到
+
+但是还有二维的情况，例如力扣[1143题](https://leetcode.cn/problems/longest-common-subsequence/)
+
+![image-20230730005135617](https://s2.loli.net/2023/07/30/VMQ8H7D5qIJ16Lj.png)
+
+本题在求解的过程中，获取最优的上一种状态时，需要同时考虑两种情况，也就是标题所说的二维的穷举
+
+具体思路如下：
+
+- 在两个字符串其中一个字符串为空字符串时，最长公共子序列的长度为0
+
+- 两个字符串非空时，根据当前搜索的字符串是否相等
+
+  - 如果相等，当前状态就是两个字符串加上当前字符之前的情况加1（加上本字符之前的最长公共子序列长度加1）
+
+  - 如果不等，当前状态就是两个字符串任意不加上当前字符，两个字符串之间最长的公共子序列的长度（继承上一种状态中的最优的情况）
+
+    > 若text1[i] != text2[j]，也就是说两个字符串的最后一位不相等，那么字符串text1的[1,i]区间和字符串text2的[1,j]区间的最长公共子序列长度无法延长，因此f[i][j]就会继承f[i-1][j]与f[i][j-1]中的较大值，即f[i][j] = max(f[i - 1][j],f[i][j - 1])
+
+![image-20230730010220349](https://s2.loli.net/2023/07/30/qQDaePbE8SNkgRB.png)代码如下：
+
+```java
+    public int longestCommonSubsequence(String text1, String text2)
+    {
+        int m=text1.length();
+        int n=text2.length();
+        int[][] dp=new int[m+1][n+1];
+        //空字符串之间的公共子序列的长度为0
+        for (int i = 0; i <=m; i++)
+        {
+            dp[i][0]=0;
+        }
+        for (int i = 0; i <=n; i++)
+        {
+            dp[0][i]=0;
+        }
+        for (int i = 1; i <=m; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                //如果两个字符串的当前字符相等，则公共子序列的长度等于两个字符串的前一个字符的公共子序列的长度+1
+                //上一个状态+1
+                if(text1.charAt(i-1)==text2.charAt(j-1))
+                {
+                    dp[i][j]=dp[i-1][j-1]+1;
+                }
+                //如果不相等，取两个字符串上一个状态的最大值，因为需要求最长的公共子序列
+                else
+                {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+```
+
+再如力扣[354题](https://leetcode.cn/problems/russian-doll-envelopes/)
+
+![image-20230730142832024](https://s2.loli.net/2023/07/30/Z95R4dSHApQz8mN.png)
+
+这题有点不太好想，具体思路如下：
+
+- 先对序列中的第0个元素从小到大排列
+- 对序列中每个成员的第1个元素进行从大到小排列（后续要求最长递增子序列，这样就可以保证最长递增子序列中不会取到宽度相同的信封）
+- 最终求得的最长递增子序列大小就是信封个数
+
+![image-20230730142941000](https://s2.loli.net/2023/07/30/lbJTfkQcAgFNEae.png)
+
+代码如下：
+
+```java
+    public int maxEnvelopes(int[][] envelopes)
+    {
+        //先按照第0个元素进行升序排序，遇到第0个元素相同的情况下，按照降序排列
+        if(envelopes.length==1)
+        {
+            return 1;
+        }
+        Arrays.sort(envelopes,(a,b)->a[0]==b[0]?b[1]-a[1]:a[0]-b[0]);
+        int[] dp=new int[envelopes.length];
+        for (int i = 0; i < envelopes.length; i++)
+        {
+            dp[i]=envelopes[i][1];
+        }
+        return getMaxLength(dp);
+    }
+
+	//使用二分的查找最长递增子序列方法，不然会超时
+    public int getMaxLength(int[] nums)
+    {
+        int[] cell=new int[nums.length];
+        cell[0]=nums[0];
+        //要插入的点的索引
+        int res=1;
+        for (int i=1;i<nums.length;i++)
+        {
+            if(nums[i]>cell[res-1])
+            {
+                cell[res]=nums[i];
+                res++;
+            }
+            else
+            {
+                //将当前元素与cell中比当前元素大的第一个元素进行交换
+                int index=Arrays.binarySearch(cell,0,res,nums[i]);
+                if(index<0)
+                {
+                    int index1=-index-1;
+                    cell[index1]=nums[i];
+                }
+            }
+        }
+        return res;
     }
 ```
 

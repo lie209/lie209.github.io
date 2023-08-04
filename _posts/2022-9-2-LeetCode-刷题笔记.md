@@ -4,10 +4,11 @@ title: LeetCode 刷题笔记
 date: 2023-7-4
 catalog: true
 tags: [Java]
-subtitle: 持续更新，持续进步...
+subtitle: 持续更新，持续进步
 ---
 
-# `LeetCode` 刷题笔记
+
+# LeetCode 刷题笔记
 
 这篇笔记主要记录学习`labuladong`算法秘籍的一些心得体会
 

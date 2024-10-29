@@ -1,7 +1,7 @@
 ---
 layout: post
-title: SpringBoot实战
-date: 2024-7-12
+title: SpringBoot总结
+date: 2024-10-12
 catalog: true
 tags: [Java]
 ---

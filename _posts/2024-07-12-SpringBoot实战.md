@@ -909,8 +909,281 @@ public class Category {
        </mapper>
        ```
    
-       
-   
-       
-   
-       
+
+## Redis
+
+例如，防止令牌修改后，他人通过旧的令牌来访问接口，让令牌主动失效
+
+在拦截器中查看是否redis中有令牌与传进的令牌一样，如果有，则令牌有效
+
+### SpringBoot集成
+
+- 导入spring-boot-starter-data-redis起步依赖
+
+  ```xml
+          <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-data-redis</artifactId>
+              <version>3.3.4</version>
+          </dependency>
+  ```
+
+- 在yml配置文件中, 配置redis连接信息
+
+  ```xml
+  spring:
+    application:
+      name: big-event
+    data:
+      redis:
+        host: localhost
+        port: 6379
+        password: root@123456
+  ```
+
+- 调用API(StringRedisTemplate)完成字符串的存取操作
+
+  ```java
+  //如果在测试类中添加了这个注解，那么将来单元测试方法执行之前，会初始化Spring容器
+  @SpringBootTest
+  public class RedisTest {
+      @Autowired
+      private StringRedisTemplate redisTemplate;
+      @Test
+      public void testSet(){
+          //往redis中存一个键值对
+          ValueOperations<String, String> operations = redisTemplate.opsForValue();
+          operations.set("username","zhangsan");
+          //可以设置timeout过期时间
+          operations.set("password","123456",20, TimeUnit.SECONDS);
+      }
+      @Test
+      public void testGet(){
+          //从redis中取出键值对
+          ValueOperations<String, String> operations = redisTemplate.opsForValue();
+          String username = operations.get("password");
+          System.out.println(username);
+      }
+  }
+  ```
+
+### 令牌主动失效
+
+- 登录成功后，给浏览器响应令牌的同时，把该令牌存储到redis中
+
+  ```java
+      @PostMapping("/login")
+      public Result<String> login(String username, String password)
+      {
+  			...
+              if(Md5Util.getMD5String(password).equals(user.getPassword()))
+              {
+                  Map<String,Object> claims=new HashMap<String, Object>();
+                  claims.put("id",user.getId());
+                  claims.put("username",user.getUsername());
+                  String token= JwtUtil.genToken(claims);
+                  //把token存储到redis中
+                  redisTemplate.opsForValue().set(token,token,1,TimeUnit.HOURS);
+                  return Result.success(token);
+              }
+  			...
+      }
+  ```
+
+- LoginInterceptor拦截器中，需要验证浏览器携带的令牌，并同时需要获取到redis中存储的与之相同的令牌
+
+  ```java
+  @Component
+  public class LoginInterceptor implements HandlerInterceptor
+  {
+      @Autowired
+      private StringRedisTemplate redisTemplate;
+      @Override
+      public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler)
+      {
+          //令牌验证
+          //获得token
+          String token = req.getHeader("Authorization");
+          //验证token
+          try {
+              //从redis中获得相同的token
+              String redisToken = redisTemplate.opsForValue().get(token);
+              if (redisToken == null)
+              {
+                  //抛出异常给下面的异常处理
+                  throw new RuntimeException("token无效");
+              }
+  ```
+
+- **当用户修改密码成功后，删除redis中存储的旧令牌**
+
+  需要在接口方法中添加一个参数token，以便于获得当前用户之前的token
+
+  ```java
+      @PatchMapping("/updatePwd")
+      public Result updatePwd(@RequestBody Map<String,String> params, @RequestHeader("Authorization") String token)
+      {
+          ...
+          Map<String,Object> claims = ThreadLocalUtil.get();
+          User user=userService.findUserByUsername((String) claims.get("username"));
+          if(Md5Util.getMD5String(oldPwd).equals(user.getPassword()))
+          {
+              if(newPwd.equals(rePwd))
+              {
+                  userService.updatePwd(newPwd);
+                  //删除redis中对应的token
+                  ///redisTemplate.opsForValue().getOperations()可以提供更丰富的API
+                  redisTemplate.opsForValue().getOperations().delete(token);
+                  return Result.success();
+              }
+           ...
+          }
+      }
+              
+  ```
+
+# SpringBoot部署
+
+- 在`pom.xml`中添加bulid打包插件
+
+  ```xml
+      <build>
+          <plugins>
+              <plugin>
+                  <groupId>org.springframework.boot</groupId>
+                  <artifactId>spring-boot-maven-plugin</artifactId>
+              </plugin>
+          </plugins>
+      </build>
+  ```
+
+- 执行maven中的`package`命令
+- 使用`java -jar *.jar`命令运行jar包
+
+### 属性配置
+
+当需要在打包完成后，修改jar包的运行时参数时，可以使用以下参数配置方式，优先级从上往下依次递增：
+
+- 项目中resources目录下的application.yml
+
+- Jar包所在目录下的application.yml
+
+- 操作系统环境变量
+
+- 命令行参数
+
+## 多环境开发
+
+#### Profiles
+
+环境名称有：开发->`dev`，测试->`test`，生产->`pro`
+
+- 单文件配置
+
+  - 使用`---` 分隔不同环境的配置
+
+  - `spring.config.activate.on-profile`配置所属的环境
+
+  - `spring.profiles.active`激活环境
+
+#### Profiles分组
+
+配置文件写到同一个文件中，会导致配置项过多，不利于维护
+
+- 多文件配置
+
+  - 通过多个文件分别配置不同环境的属性，文件的名字为 `application-环境名称.yml`，例如：
+
+    `application-devDB.yml`
+
+    ```xml
+    spring:
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/big_event?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+        username: root
+        password: lie209520
+    
+      data:
+        redis:
+          host: localhost
+          port: 6379
+          password: root@123456
+    
+    mybatis:
+      configuration:
+        map-underscore-to-camel-case: true
+    ```
+
+    `application-devServer.yml`
+
+    ```xml
+    server:
+      port: 80
+    ```
+
+    `application-devSelf.yml`
+
+    ```xml
+    spring:
+      application:
+        name: big-event
+    ```
+
+  - 在`application.yml`中激活环境
+
+    ```xml
+    spring:
+      profiles:
+        group:
+          "dev": devDB,devServer,devSelf
+        active: dev
+    
+    ```
+
+
+## 常见问题
+
+### 1.ApplicationContextInitializer如何使用?
+
+- 自定义类,实现ApplicationContextInitializer接口
+
+- 在META-INF/spring.factories配置文件中配置自定义的类
+
+### 2.initialize方法什么时候执行?
+
+- IOC容器对象创建完成后执行, **常用于环境属性注册**
+
+### 3.ApplicationListener如何使用?
+
+- 自定义类,实现ApplicationListener接口
+
+- 在META-INF/spring.factories配置文件中配置自定义的类
+
+### 4.onApplicationEvent方法什么时候执行?
+
+- IOC容器发布事件之后执行, 通常**用于资源加载, 定时任务发布等**
+
+### 5.BeanFactory的作用?
+
+- Bean容器的根接口, **提供Bean对象的创建、配置、依赖注入等功能**
+
+### 6.BeanFactory常见的两个实现?
+
+- ApplicationConfigServletServerApplicationContext
+
+- DefaultListableBeanFactory
+
+### 7.BeanDefinition作用
+
+- 用于描述Bean的所有信息，包括Bean的名称，Bean的属性，Bean的行为，实现的接口，添加的注解等等，Spring中，Bean在创建之前，都需要封装成对应的BeanDefinition，然后**根据BeanDefinition进一步创建Bean对象**
+
+  ![image-20241025092806273](https://s2.loli.net/2024/10/25/qIEx6jYMgOpnD1v.png)
+
+### 8.BeanFactoryPostProcessor作用
+
+- Bean工厂后置处理器，**当BeanFactory实例化后(Bean创建初始化之前)**，会调用该接口的postProcessBeanFactory方法，**注册一些BeanDefinition给BeanFactory**
+
+### 9.Aware接口
+
+- 感知接口，Spring提供的一种机制，通过实现该接口，重写方法，**可以感知Spring应用程序执行过程中的一些变化**。Spring会判断当前的Bean有没有实现Aware接口，如果实现了，会在特定的时机**回调**接口对应的方法
